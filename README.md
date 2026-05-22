@@ -24,7 +24,8 @@ what's new for users.
 JedEye is a handheld instrument for cave surveying, measuring distance, heading,
 inclination and temperature in a single shot. It runs on an Arduino Nano RP2040
 Connect and talks to survey apps (e.g. TopoDroid) over Bluetooth, or serves its
-own web interface over WiFi.
+own web interface over WiFi. It is optimized for use with the
+[Ariane](https://www.arianesline.com/) cave-surveying software.
 
 This repository hosts **release builds only**. The firmware source code lives in
 a separate repository.
