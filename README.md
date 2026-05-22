@@ -10,9 +10,11 @@ what's new for users.
 
 1. Download the latest `firmware-<version>.uf2` from the
    [Releases page](https://github.com/Ariane-s-Line/JedEye-Release/releases/latest).
-2. Connect the JedEye to your computer over USB and put it in bootloader mode
-   (double-tap the reset button). A drive named **RPI-RP2** appears.
-3. Drag the `.uf2` file onto that drive. The device reboots automatically into
+2. Connect the JedEye to your computer over USB.
+3. On the device, go to **OPTIONS → SETTINGS → SYSTEM → UPDATE → Confirm**. The
+   JedEye reboots into update mode and a drive named **RPI-RP2** appears on your
+   computer.
+4. Drag the `.uf2` file onto that drive. The device reboots automatically into
    the new firmware.
 
 > After some updates you may also need to refresh the device's radio module
