@@ -29,16 +29,19 @@ jobs:
         run: |
           set -euo pipefail
           TAG="${{ github.event.release.tag_name }}"
-          if [ -z "$TAG" ]; then
-            TAG="$(gh release view --repo "$GITHUB_REPOSITORY" --json tagName -q .tagName)"
+          if [ -n "$TAG" ]; then
+            # Triggered by a published release -> use that release's .bin asset.
+            APP_URL="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
+              --jq '[.assets[] | select(.name|endswith(".bin"))][0].browser_download_url')"
+          else
+            # Manual run -> newest release that actually has a .bin asset.
+            read -r TAG APP_URL <<<"$(gh api "repos/$GITHUB_REPOSITORY/releases?per_page=50" --jq 'map(select(any(.assets[]?; .name|endswith(".bin")))) | first | "\(.tag_name) \([.assets[]|select(.name|endswith(".bin"))][0].browser_download_url)"')"
           fi
-          APP_VERSION="${TAG#v}"  # device parses bare numeric; strip any leading v
-          APP_URL="$(gh api "repos/$GITHUB_REPOSITORY/releases/tags/$TAG" \
-            --jq '[.assets[] | select(.name|endswith(".bin"))][0].browser_download_url')"
-          if [ -z "$APP_URL" ] || [ "$APP_URL" = "null" ]; then
-            echo "::error::release $TAG has no .bin asset (attach the OTA firmware.bin)"
+          if [ -z "$TAG" ] || [ -z "$APP_URL" ] || [ "$APP_URL" = "null" ]; then
+            echo "::error::no release with a .bin asset found (attach the OTA firmware.bin)"
             exit 1
           fi
+          APP_VERSION="${TAG#v}"  # device parses bare numeric; strip any leading v
           cat > manifest.txt <<EOF
           app_version=${APP_VERSION}
           app_url=${APP_URL}
